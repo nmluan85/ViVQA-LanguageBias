@@ -1,0 +1,7 @@
+data/*
+__pycache__/*
+.venv/*
+lavis/common/__pycache__/*
+lavis/models/__pycache__/*
+lavis/models/blip_model/__pycache__/*
+lavis/models/blip2_model/__pycache__/*
