@@ -8,7 +8,7 @@ import os
 
 import torch
 import torch.distributed as dist
-import timm.models as timm_hub
+from torch.hub import download_url_to_file, get_dir
 
 def is_dist_avail_and_initialized():
     if not dist.is_available():
@@ -36,12 +36,12 @@ def download_cached_file(url, check_hash=True, progress=False):
         # a hack to sync the file path across processes
         parts = torch.hub.urlparse(url)
         filename = os.path.basename(parts.path)
-        cached_file = os.path.join(timm_hub.get_cache_dir(), filename)
+        cached_file = os.path.join(get_dir(), filename)
 
         return cached_file
 
     if is_main_process():
-        timm_hub.download_cached_file(url, check_hash, progress)
+        download_url_to_file(url, check_hash, progress)
 
     if is_dist_avail_and_initialized():
         dist.barrier()
