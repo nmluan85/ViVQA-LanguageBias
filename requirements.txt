@@ -1,5 +1,6 @@
 transformers==4.50.2
 accelerate>=0.26.0
+h5py
 torchscale>=0.3.0
 omegaconf
 underthesea

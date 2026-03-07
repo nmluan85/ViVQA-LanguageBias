@@ -8,6 +8,8 @@ import numpy as np
 from timm.models import create_model
 from sklearn.metrics import accuracy_score
 import baseline_model
+from extract_vision import extract_features
+from VisionEmbedding import EfficientnetExtractor
 from dataset import get_dataset
 
 os.environ['MLFLOW_EXPERIMENT_NAME'] = 'mlflow-vivqa'
@@ -48,7 +50,7 @@ def get_options():
     args.add_argument("--train-path", type=str, default="./data/ViVQA-csv/train.csv")
     args.add_argument("--val-path", type=str, default="./data/ViVQA-csv/val.csv")
     args.add_argument("--test-path", type=str, default="./data/ViVQA-csv/test.csv")
-    # args.add_argument("--feature-paths", type=str, default="./features")
+    args.add_argument("--feature-paths", type=str, default="./features")
 
     # Model setting
     # args.add_argument("--efficientnet-b", choices=[0, 1, 2, 3, 4, 5, 6, 7], default=7)
@@ -109,33 +111,35 @@ def _get_train_config(opt):
 
 def main():
     opt = get_options()
-
+    model_efficientnet = EfficientnetExtractor("efficientnet-b7")
+    print("load model successfully")
+    extract_features(model_efficientnet, opt, "efficientnet-b7")
     # train_dataset, val_dataset, test_dataset = get_dataset(opt)
-    train_dataset, test_dataset = get_dataset(opt, validation=False)
+    # train_dataset, test_dataset = get_dataset(opt, validation=False)
 
-    model = create_model('vivqa_model', 
-                        num_classes=opt.classes, 
-                        drop_path_rate=opt.drop_path_rate,
-                        encoder_layers=opt.encoder_layers,
-                        encoder_attention_heads=opt.encoder_attention_heads_layers)
+    # model = create_model('vivqa_model', 
+    #                     num_classes=opt.classes, 
+    #                     drop_path_rate=opt.drop_path_rate,
+    #                     encoder_layers=opt.encoder_layers,
+    #                     encoder_attention_heads=opt.encoder_attention_heads_layers)
 
-    args = _get_train_config(opt)
+    # args = _get_train_config(opt)
 
-    trainer = Trainer(
-        model=model,
-        args=args,
-        train_dataset=train_dataset,
-        eval_dataset=test_dataset,
-        compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=5)]
-    )
+    # trainer = Trainer(
+    #     model=model,
+    #     args=args,
+    #     train_dataset=train_dataset,
+    #     eval_dataset=test_dataset,
+    #     compute_metrics=compute_metrics,
+    #     callbacks=[EarlyStoppingCallback(early_stopping_patience=5)]
+    # )
 
-    trainer.train()
+    # trainer.train()
 
-    test = trainer.evaluate(test_dataset)
-    print(f'Test Accuracy: {test["eval_accuracy"]}')
+    # test = trainer.evaluate(test_dataset)
+    # print(f'Test Accuracy: {test["eval_accuracy"]}')
 
-    mlflow.end_run()
+    # mlflow.end_run()
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,5 @@
-from timm.models.registry import register_model
-from timm.models.layers import trunc_normal_ as __call_trunc_normal_
+from timm.models import register_model
+from timm.layers import trunc_normal_ as __call_trunc_normal_
 from torchscale.component.multiway_network import MutliwayEmbedding
 from torchscale.component.embedding import PositionalEmbedding
 from torchscale.architecture.encoder import Encoder
