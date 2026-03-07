@@ -83,7 +83,7 @@ class EfficientnetExtractor(nn.Module):
     
     def forward(self, *images):
         self.model.eval()
-        images_transformed = torch.stack([self.transform(image.convert('RGB')).to(self.device) for image in images])
+        images_transformed = torch.stack([self.processor(image.convert('RGB')).to(self.device) for image in images])
         batch_size = images_transformed.size(0)
         x = self.model.extract_features(images_transformed)
         x = self.pooling1(x)
