@@ -150,9 +150,9 @@ def get_dataset(opt, tokenizer):
     with open(test_css_path, "rb") as f:
         css_candidates_test = pickle.load(f)
 
-    train_dataset = ViVQADataset(df_train, tokenizer, *feature_paths, css_candidates=css_candidates_train)
-    val_dataset   = ViVQADataset(df_val, tokenizer, *feature_paths, css_candidates=css_candidates_val)
-    test_dataset  = ViVQADataset(df_test, tokenizer, *feature_paths, css_candidates=css_candidates_test)
+    train_dataset = ViVQADataset(df_train, tokenizer, *feature_paths, css_candidates=css_candidates_train, topk=opt.top_k)
+    val_dataset   = ViVQADataset(df_val, tokenizer, *feature_paths, css_candidates=css_candidates_val, topk=opt.top_k)
+    test_dataset  = ViVQADataset(df_test, tokenizer, *feature_paths, css_candidates=css_candidates_test, topk=opt.top_k)
 
     _, COUNTING_ANSWER_IDS = get_answer_ids_from_train(df_train, train_dataset.vocab_a, 1)
     _, COLOR_ANSWER_IDS = get_answer_ids_from_train(df_train, train_dataset.vocab_a, 2)
