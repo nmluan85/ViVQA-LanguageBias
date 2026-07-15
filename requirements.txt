@@ -10,3 +10,5 @@ timm==0.6.13
 opencv-python
 efficientnet_pytorch
 mlflow
+sentencepiece
+py_vncorenlp
