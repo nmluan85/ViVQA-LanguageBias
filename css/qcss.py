@@ -162,9 +162,7 @@ class QCSSGenerator:
             first_np = self.extract_phrase_vncorenlp(after_trigger)
             if first_np:
                 return first_np
-
-            # print(f"question: {question}")
-            # print(f"noun: {first_np}")
+            
             words = after_trigger.split()
             return " ".join(words[:4]).strip() if words else None
 
