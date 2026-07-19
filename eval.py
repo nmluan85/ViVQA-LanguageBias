@@ -110,7 +110,6 @@ def main():
 
     train_dataset, val_dataset, test_dataset, COUNTING_ANSWER_IDS, COLOR_ANSWER_IDS = get_dataset(opt, tokenizer)
 
-
     state_dict = torch.load(opt.ckpt_path, map_location="cpu")
     model.load_state_dict(state_dict, strict=False)
     model.eval()

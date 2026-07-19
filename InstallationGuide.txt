@@ -1,0 +1,100 @@
+INSTALLATION AND USER MANUAL: ViVQA-LanguageBias
+
+========================================================================
+1. ENVIRONMENT SETUP
+========================================================================
+- It is highly recommended to initialize a virtual environment and install all necessary packages from `requirements.txt`:
+
+  ```bash
+  # Create a python virtual environment (e.g., using venv)
+  python -m venv .venv
+
+  # Activate the virtual environment
+  # On Windows:
+  .venv\Scripts\activate
+  # On Linux/macOS:
+  source .venv/bin/activate
+
+  # Install required packages
+  pip install -r requirements.txt
+  ```
+
+========================================================================
+2. DATASET STRUCTURE & PREPROCESSING
+========================================================================
+- All original dataset files must be placed inside the `data/` directory.
+- Due to hardware constraints (lack of computational capacity to run the entire pipeline end-to-end), extracting global features (BLIP-2) and local features (VinVL) must be completed in advance.
+- Execute the following script to extract the visual features:
+
+  ```bash
+  python extract_vision.py
+  ```
+
+- Once successfully extracted, features will be automatically saved and stored in the `features/` directory.
+
+========================================================================
+3. MODEL TRAINING
+========================================================================
+- To train the model, run `train.py` with the appropriate configuration parameters. Available command-line arguments include:
+
+  * Training Arguments:
+    --output-dir                        Directory to save model outputs (Default: "./output")
+    --log-level                         Logging level ["debug", "info", "warning", "error", "critical", "passive"] (Default: "passive")
+    --lr-scheduler-type                 Type of learning rate scheduler ["cosine", "linear"] (Default: "cosine")
+    --warmup-ratio                      Warmup ratio for learning rate scheduling (Default: 0.1)
+    --logging-strategy                  Logging strategy ["no", "epoch", "steps"] (Default: "epoch")
+    --save-strategy                     Model checkpoint saving strategy ["no", "epoch", "steps"] (Default: "epoch")
+    --save-total-limit                  Maximum number of total checkpoints to retain (Default: 1)
+    -tb, --train-batch-size             Batch size used for training (Default: 8)
+    --gradient-accumulation-steps       Number of updates steps to accumulate gradients (Default: 4)
+    -eb, --eval-batch-size              Batch size used for evaluation (Default: 32)
+    -e, --epochs                        Total number of training epochs (Default: 20)
+    -lr, --learning-rate                Initial learning rate (Default: 3e-5)
+    --weight-decay                      Weight decay coefficient (Default: 0.01)
+    --workers                           Number of data loader workers (Default: 0)
+
+  * Variables Setting:
+    --image-path                        Path to the directory containing raw images (Default: "./data/images")
+    --ans-path                          Path to the answer vocabulary file (Default: "./data/vocab.json")
+    --train-path                        Path to the training data CSV file (Default: "./data/ViVQA-csv/train.csv")
+    --val-path                          Path to the validation data CSV file (Default: "./data/ViVQA-csv/val.csv")
+    --test-path                         Path to the test data CSV file (Default: "./data/ViVQA-csv/test.csv")
+    --feature-paths                     Path to the directory containing extracted features (Default: "./features")
+    --css-candidates                    Path to the CSS candidate files directory (Default: "./css-candidates")
+
+  * VinVL Parameters:
+    --top-K                             Maximum number of regional proposals extracted from VinVL (Default: 36)
+    --top-k                             Maximum number of regional proposals to keep (Default: 10)
+
+  * CSS (Counterfactual Situation Supervision) Parameters:
+    --use-vcss                          Whether to use visual CSS (vcss) [True/False] (Default: True)
+    --use-qcss                          Whether to use question CSS (qcss) [True/False] (Default: True)
+    --css-types                         Types of CSS modifications ["counting", "color"] (Default: ["counting", "color"])
+    --css-interval                      Frequency interval for executing CSS steps (Default: 2)
+    --mask-value                        Mask value used during CSS token masking (Default: 0.0)
+    --alpha-css                         Loss weight factor for CSS loss (Default: 0.1)
+    --css-start-step                    Global training step to start applying CSS (Default: 500)
+
+  * Model Settings:
+    --drop-path-rate                    Stochastic depth drop path rate (Default: 0.3)
+    --encoder-layers                    Number of layers in the encoder (Default: 6)
+    --encoder-attention-heads-layers    Number of attention heads per encoder layer (Default: 6)
+    --classes                           Number of output classification target classes (Default: 353)
+
+- Sample training command with default settings:
+  ```bash
+  python train.py --output-dir ./output --epochs 20 --train-batch-size 8
+  ```
+
+========================================================================
+4. MODEL EVALUATION
+========================================================================
+- To evaluate a trained model on test data, run `eval.py` passing the path to your checkpoint weight file:
+
+  * Key Evaluation Argument:
+    --ckpt-path                         Path to the trained model weight binary file (Default: "./output/pytorch_model.bin")
+
+- Sample evaluation command:
+  ```bash
+  python eval.py --ckpt-path ./output/pytorch_model.bin
+  ```
