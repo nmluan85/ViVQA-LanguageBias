@@ -23,19 +23,22 @@ ViVQA-LanguageBias/
 ├── features/                # Pre-extracted global (BLIP-2) and local (VinVL) visual     
 ├── output/                  # Trained checkpoints and model assessment binaries
 ├── baseline_model.py        # Standard VQA model architecture configuration
-├── proposed_model.py        # Counterfactual-enhanced robust VQA architecture
-├── css_trainer.py           # Custom training loops adjusting balanced counterfactual 
+├── proposed_model.py        # Vietnamese VQA architecture without CSS
+├── css_trainer.py           # ViVQA with Counterfactual Sample Synthesizing
 ├── dataset.py / dataset_css.py  # Data loaders and custom collation wrappers for CSS
 ├── extract_vision.py        # Feature extractor script (BLIP-2 / VinVL)
 ├── main.py / run_model.py   # Test a sample
 ├── train.py                 # Core model training script
 ├── eval.py                  # Evaluation suite script
+├── processor.py             # Image Processor of BLIP
+├── TextEmbedding.py         # Load BARTPho to extract word embedding
+├── VisionEmbedding.py       # Load BLIP-2, VinVL to extract visual embedding.
 └── requirements.txt         # Project dependencies checklist
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Environment Setup
 Initialize your environment wrapper and install the required dependencies:
@@ -57,9 +60,16 @@ python extract_vision.py
 ```
 Extracted embeddings will automatically route to the `features/` directory to be consumed directly during training loops (blip-2.hdf5 for BLIP-2 and VinVL.hdf5 for VinVL).
 
+Extracted features are available in 2 links:
+
+◦ **BLIP-2:** [\[link\]](https://drive.google.com/file/d/1Q8ZQRR6Sunz5SS-HjFvb1lFGPPuNxSar/view?usp=sharing)
+◦ **VinVL:** [\[link\]](https://drive.google.com/file/d/1Y8XGRe7JOvFFBE6JpNpKXe6bWkzMb5Gi/view?usp=sharing)
+
+After downloading, please place them into the `./features/` directory.
+
 ---
 
-## 🏋️‍♂️ Training the Model
+## Training the Model
 
 Run `train.py` to initiate the training loop. The training setup integrates both Question CSS (`--use-qcss`) and Visual CSS (`--use-vcss`) to prevent the model from memorizing language-bias correlations.
 
@@ -90,7 +100,10 @@ For a complete breakdown of configuration settings, please reference `Installati
 
 ---
 
-## 📊 Evaluation
+## Evaluation
+
+Model weight of paper available: [\[link\]](https://drive.google.com/file/d/1FBS5FJyP5zYWgjZrMoYd7_7JxMrwKSOa/view?usp=sharing)
+After downloading, please put it in folder ./output/
 
 Evaluate the performance of trained models on your specified test partition by pointing `eval.py` to the saved binary weights file:
 
