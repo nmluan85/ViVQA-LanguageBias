@@ -62,8 +62,8 @@ Extracted embeddings will automatically route to the `features/` directory to be
 
 Extracted features are available in 2 links:
 
-◦ **BLIP-2:** [\[link\]](https://drive.google.com/file/d/1Q8ZQRR6Sunz5SS-HjFvb1lFGPPuNxSar/view?usp=sharing)
-◦ **VinVL:** [\[link\]](https://drive.google.com/file/d/1Y8XGRe7JOvFFBE6JpNpKXe6bWkzMb5Gi/view?usp=sharing)
+**BLIP-2:** [\[link\]](https://drive.google.com/file/d/1Q8ZQRR6Sunz5SS-HjFvb1lFGPPuNxSar/view?usp=sharing)
+**VinVL:** [\[link\]](https://drive.google.com/file/d/1Y8XGRe7JOvFFBE6JpNpKXe6bWkzMb5Gi/view?usp=sharing)
 
 After downloading, please place them into the `./features/` directory.
 
@@ -102,8 +102,7 @@ For a complete breakdown of configuration settings, please reference `Installati
 
 ## Evaluation
 
-Model weight of paper available: [\[link\]](https://drive.google.com/file/d/1FBS5FJyP5zYWgjZrMoYd7_7JxMrwKSOa/view?usp=sharing)
-After downloading, please put it in folder ./output/
+Model weight of paper available: [\[link\]](https://drive.google.com/file/d/1FBS5FJyP5zYWgjZrMoYd7_7JxMrwKSOa/view?usp=sharing). After downloading, please put it in folder ./output/
 
 Evaluate the performance of trained models on your specified test partition by pointing `eval.py` to the saved binary weights file:
 
