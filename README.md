@@ -52,7 +52,8 @@ pip install -r requirements.txt
 ```
 
 ### 2. Dataset
-Available at: [link]
+
+Available at: [\[link\]](https://drive.google.com/drive/folders/1ApcMIrZQt26UdPSuQoN1Z2kzsle2NBHD?usp=sharing).
 
 ◦ **`images.zip`:** Unzip and place the folder into `./dataset/`  
 ◦ **`vocab.json`:** Place into `./dataset/`  
