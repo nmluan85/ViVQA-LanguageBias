@@ -51,7 +51,14 @@ source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Feature Extraction (Preprocessing)
+### 2. Dataset
+Available at: [link]
+
+◦ **`images.zip`:** Unzip and place the folder into `./dataset/`  
+◦ **`vocab.json`:** Place into `./dataset/`  
+◦ **`VQA-csv`:** Download 3 files (`train.csv`, `test.csv`, `eval.csv`) and place them into `./dataset/VQA-csv/`
+
+### 3. Feature Extraction (Preprocessing)
 Because training models end-to-end with deep vision backbones requires substantial computing overhead, you must extract global attributes (**BLIP-2**) and regional local attributes (**VinVL**) beforehand.
 
 Place your raw image instances in `data/images/` and execute:
