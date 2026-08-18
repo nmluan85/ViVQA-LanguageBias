@@ -18,7 +18,8 @@ ViVQA-LanguageBias/
 ├── css-candidates/          # Synthesized VCSS and QCSS candidates
 │   ├── css_candidates_train.pkl
 │   ├── css_candidates_val.pkl
-│   └── css_candidates_test.pkl
+|   ├── css_candidates_test.pkl
+│   └── generate_css_candidates.ipynb
 ├── data/                    # Dataset root directory
 │   ├── ViVQA-csv/           # Split dataset annotations (train.csv, val.csv, test.csv)
 │   ├── images/              # Raw image files
@@ -90,15 +91,15 @@ After downloading, please place them into the `./features/` directory.
 
 ### 4. CSS Candidate (Preprocessing)
 
-The `css-candidates/` folder contains a Jupyter Notebook used to generate CSS candidate files for the train, validation, and test sets.
+The `css-candidates/` folder contains a Jupyter notebook (`generate_css_candidates.ipynb`) for generating CSS candidate files for the train, validation, and test sets.
 
-At this stage, the VinVL object features and the critical noun extracted from each question are already available. The notebook performs the following steps:
+At this preprocessing stage, the VinVL object features and the critical nouns extracted from the questions are already available. The notebook performs the following steps:
 
 1. **Semantic Ranking:**  
-   The 36 VinVL object regions are ranked according to their semantic similarity with the corresponding critical noun.
+   The 36 VinVL object regions are ranked according to their semantic relevance to the corresponding critical noun.
 
 2. **Candidate Storage:**  
-   The ranked object regions are saved as precomputed CSS candidates for later use during counterfactual training.
+   The ranked object regions are stored as precomputed CSS candidates for use during counterfactual training.
 
 Running the notebook generates the following files:
 
@@ -107,6 +108,7 @@ css-candidates/
 ├── css_candidates_train.pkl
 ├── css_candidates_val.pkl
 └── css_candidates_test.pkl
+```
 
 ---
 
