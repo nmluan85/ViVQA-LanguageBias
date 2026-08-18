@@ -57,7 +57,13 @@ Available at: [\[link\]](https://drive.google.com/drive/folders/1ApcMIrZQt26UdPS
 
 ◦ **`images.zip`:** Unzip and place the folder into `./dataset/`  
 ◦ **`vocab.json`:** Place into `./dataset/`  
-◦ **`VQA-csv`:** Download 3 files (`train.csv`, `test.csv`, `eval.csv`) and place them into `./dataset/VQA-csv/`
+◦ **`VQA-csv/`**: Download the following CSV files and place them in `./dataset/VQA-csv/`:
+  - `train.csv`
+  - `test.csv`
+  - `eval.csv`
+  - `train_with_critical_noun.csv`
+  - `test_with_critical_noun.csv`
+  - `eval_with_critical_noun.csv`
 
 ### 3. Feature Extraction (Preprocessing)
 Because training models end-to-end with deep vision backbones requires substantial computing overhead, you must extract global attributes (**BLIP-2**) and regional local attributes (**VinVL**) beforehand.
