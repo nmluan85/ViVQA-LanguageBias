@@ -20,20 +20,7 @@ INSTALLATION AND USER MANUAL: ViVQA-LanguageBias
   ```
 
 ========================================================================
-2. DATASET STRUCTURE & PREPROCESSING
-========================================================================
-- All original dataset files must be placed inside the `data/` directory.
-- Due to hardware constraints (lack of computational capacity to run the entire pipeline end-to-end), extracting global features (BLIP-2) and local features (VinVL) must be completed in advance.
-- Execute the following script to extract the visual features:
-
-  ```bash
-  python extract_vision.py
-  ```
-
-- Once successfully extracted, features will be automatically saved and stored in the `features/` directory.
-
-========================================================================
-3. MODEL TRAINING
+2. MODEL TRAINING
 ========================================================================
 - To train the model, run `train.py` with the appropriate configuration parameters. Available command-line arguments include:
 
