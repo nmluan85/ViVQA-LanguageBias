@@ -15,12 +15,18 @@ ViVQA-LanguageBias/
 ├── css/                     # Core Counterfactual Situation Supervision modules
 │   ├── qcss.py              # Question-level CSS modifications
 │   └── vcss.py              # Visual-level CSS modifications
-├── css-candidates/          # Synthesized VCSS and QCSS of train, test, and val set
+├── css-candidates/          # Synthesized VCSS and QCSS candidates
+│   ├── css_candidates_train.pkl
+│   ├── css_candidates_val.pkl
+│   └── css_candidates_test.pkl
 ├── data/                    # Dataset root directory
 │   ├── ViVQA-csv/           # Split dataset annotations (train.csv, val.csv, test.csv)
 │   ├── images/              # Raw image files
 │   └── vocab.json           # Answer vocabulary dictionary
-├── features/                # Pre-extracted global (BLIP-2) and local (VinVL) visual     
+├── features/                # Visual feature extraction (BLIP-2, EfficientNet-b7, VinVL) notebooks
+│   ├── extract_BLIP2_features.ipynb
+│   ├── extract_EfficientNetB7_features.ipynb
+│   └── extract_VinVL_features.ipynb
 ├── output/                  # Trained checkpoints and model assessment binaries
 ├── baseline_model.py        # Standard VQA model architecture configuration
 ├── proposed_model.py        # Vietnamese VQA architecture without CSS
@@ -66,9 +72,10 @@ Available at: [\[link\]](https://drive.google.com/drive/folders/1ApcMIrZQt26UdPS
   - `eval_with_critical_noun.csv`
 
 ### 3. Feature Extraction (Preprocessing)
-Because training models end-to-end with deep vision backbones requires substantial computing overhead, you must extract global attributes (**BLIP-2**) and regional local attributes (**VinVL**) beforehand.
+Because training models end-to-end with deep vision backbones requires substantial computational resources, you should extract global visual features (**BLIP-2**) and regional object-level features (**VinVL**) beforehand using the Jupyter notebooks in the `features/` folder on Kaggle.
 
-Place your raw image instances in `data/images/` and execute:
+Alternatively, for offline feature extraction, place your raw images in `data/images/` and run:
+
 ```bash
 python extract_vision.py
 ```
@@ -80,6 +87,26 @@ Extracted features are available in 2 links:
 **VinVL:** [\[link\]](https://drive.google.com/file/d/1Y8XGRe7JOvFFBE6JpNpKXe6bWkzMb5Gi/view?usp=sharing)
 
 After downloading, please place them into the `./features/` directory.
+
+### 4. CSS Candidate (Preprocessing)
+
+The `css-candidates/` folder contains a Jupyter Notebook used to generate CSS candidate files for the train, validation, and test sets.
+
+At this stage, the VinVL object features and the critical noun extracted from each question are already available. The notebook performs the following steps:
+
+1. **Semantic Ranking:**  
+   The 36 VinVL object regions are ranked according to their semantic similarity with the corresponding critical noun.
+
+2. **Candidate Storage:**  
+   The ranked object regions are saved as precomputed CSS candidates for later use during counterfactual training.
+
+Running the notebook generates the following files:
+
+```text
+css-candidates/
+├── css_candidates_train.pkl
+├── css_candidates_val.pkl
+└── css_candidates_test.pkl
 
 ---
 
