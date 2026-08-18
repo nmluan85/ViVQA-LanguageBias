@@ -39,9 +39,9 @@ def get_options():
     # Varriables setting
     args.add_argument("--image-path", type=str, default="./data/images")
     args.add_argument("--ans-path", type=str, default="./data/vocab.json")
-    args.add_argument("--train-path", type=str, default="./data/ViVQA-csv/train.csv")
-    args.add_argument("--val-path", type=str, default="./data/ViVQA-csv/val.csv")
-    args.add_argument("--test-path", type=str, default="./data/ViVQA-csv/test.csv")
+    args.add_argument("--train-path", type=str, default="./data/ViVQA-csv/train_with_critical_noun.csv")
+    args.add_argument("--val-path", type=str, default="./data/ViVQA-csv/val_with_critical_noun.csv")
+    args.add_argument("--test-path", type=str, default="./data/ViVQA-csv/test_with_critical_noun.csv")
     args.add_argument("--feature-paths", type=str, default="./features")
     args.add_argument("--css-candidates", type=str, default="./css-candidates")
 
