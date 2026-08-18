@@ -27,6 +27,19 @@ class ViVQADataset(Dataset):
         # IMPORTANT: always reset index so idx matches css_candidates key
         self.dataset = df.reset_index(drop=True)
 
+        # critical noun
+        if 'critical_noun' not in self.dataset.columns:
+            raise ValueError("Dataset must contain column 'critical_noun'")
+        
+        self.critical_nouns = (
+            self.dataset['critical_noun']
+            .fillna('')
+            .astype(str)
+            .str.lower()
+            .str.strip()
+            .tolist()
+        )
+
         # save per-dataset css mapping
         self.css_candidates = css_candidates if css_candidates is not None else {}
 
@@ -83,8 +96,9 @@ class ViVQADataset(Dataset):
 
         a = self.answers[idx]
         q_type = self.dataset.iloc[idx]["type"]
+        critical_noun = self.critical_nouns[idx]
 
-        # Select candidate objects
+        # ===== Select candidate objects =====
         all_obj_feats = visual_features['VinVL']  # (N, 2048)
 
         # IMPORTANT: use per-dataset css_candidates keyed by sample idx
@@ -110,10 +124,18 @@ class ViVQADataset(Dataset):
 
         o_feature = torch.stack(selected_features)
 
+        object_padding_mask = torch.tensor(
+            [idx == -1 for idx in selected_indices],
+            dtype=torch.bool
+        )
+
         item = {
             'g_feature': visual_features['blip-2'],
+            # 'l_feature': visual_features['efficientnet-b7'],
             'o_feature': o_feature,
+            'object_padding_mask': object_padding_mask,
             'question': q_inputs,
+            'critical_noun': critical_noun,
             'padding_mask': 1 - q_attn_mask,
             'labels': torch.tensor(a, dtype=torch.long),
             'type': torch.tensor(int(q_type), dtype=torch.long),

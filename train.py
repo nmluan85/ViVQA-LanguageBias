@@ -2,11 +2,10 @@ from transformers import TrainingArguments, Trainer, EarlyStoppingCallback, Auto
 import transformers
 import mlflow
 import argparse
-import os
-import warnings
 import numpy as np
+import proposed_model
+import torch
 from timm.models import create_model
-from utils import get_answer_ids_from_train
 from sklearn.metrics import accuracy_score
 from dataset_css import get_dataset
 from css_trainer import CSSTrainer
@@ -42,6 +41,7 @@ def get_options():
     args.add_argument("--train-path", type=str, default="./data/ViVQA-csv/train_with_critical_noun.csv")
     args.add_argument("--val-path", type=str, default="./data/ViVQA-csv/val_with_critical_noun.csv")
     args.add_argument("--test-path", type=str, default="./data/ViVQA-csv/test_with_critical_noun.csv")
+    args.add_argument("--ckpt-path", type=str, default="./output/pytorch_model.bin")
     args.add_argument("--feature-paths", type=str, default="./features")
     args.add_argument("--css-candidates", type=str, default="./css-candidates")
 
@@ -52,6 +52,8 @@ def get_options():
     # CSS parameter
     args.add_argument("--use-vcss", type=bool, default=True)
     args.add_argument("--use-qcss", type=bool, default=True)
+    args.add_argument("--alternate-vqcss", type=bool, default=False)
+    args.add_argument("--use-object-only-css", type=bool, default=True)
     args.add_argument("--css-types", nargs="+", choices=["counting", "color"], default=["counting", "color"])
     args.add_argument("--css-interval", type=int, default=2)
     args.add_argument("--mask-value", type=float, default=0.0)
@@ -83,7 +85,8 @@ def _get_train_config(opt):
         learning_rate=opt.learning_rate,
         weight_decay=opt.weight_decay,
         dataloader_num_workers=opt.workers,
-        report_to='mlflow',
+        report_to='none',
+        # report_to='mlflow',
         save_safetensors=False,
         disable_tqdm=False,
         logging_steps=10,
@@ -108,6 +111,10 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained("vinai/bartpho-syllable", use_fast=False)
 
     train_dataset, val_dataset, test_dataset, COUNTING_ANSWER_IDS, COLOR_ANSWER_IDS = get_dataset(opt, tokenizer)
+
+    state_dict = torch.load(opt.ckpt_path, map_location="cpu")
+    model.load_state_dict(state_dict, strict=False)
+    model.eval()
 
     trainer = CSSTrainer(
         opt=opt,

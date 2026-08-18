@@ -38,9 +38,9 @@ def get_options():
     # Varriables setting
     args.add_argument("--image-path", type=str, default="./data/images")
     args.add_argument("--ans-path", type=str, default="./data/vocab.json")
-    args.add_argument("--train-path", type=str, default="./data/ViVQA-csv/train.csv")
-    args.add_argument("--val-path", type=str, default="./data/ViVQA-csv/val.csv")
-    args.add_argument("--test-path", type=str, default="./data/ViVQA-csv/test.csv")
+    args.add_argument("--train-path", type=str, default="./data/ViVQA-csv/train_with_critical_noun.csv")
+    args.add_argument("--val-path", type=str, default="./data/ViVQA-csv/val_with_critical_noun.csv")
+    args.add_argument("--test-path", type=str, default="./data/ViVQA-csv/test_with_critical_noun.csv")
     args.add_argument("--ckpt-path", type=str, default="./output/pytorch_model.bin")
     args.add_argument("--feature-paths", type=str, default="./features")
     args.add_argument("--css-candidates", type=str, default="./css-candidates")
@@ -52,6 +52,8 @@ def get_options():
     # CSS parameter
     args.add_argument("--use-vcss", type=bool, default=True)
     args.add_argument("--use-qcss", type=bool, default=True)
+    args.add_argument("--alternate-vqcss", type=bool, default=False)
+    args.add_argument("--use-object-only-css", type=bool, default=True)
     args.add_argument("--css-types", nargs="+", choices=["counting", "color"], default=["counting", "color"])
     args.add_argument("--css-interval", type=int, default=2)
     args.add_argument("--mask-value", type=float, default=0.0)

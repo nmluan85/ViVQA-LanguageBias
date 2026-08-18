@@ -56,7 +56,6 @@ class ViVQABEiT3(nn.Module):
         self.visual_proj = nn.Linear(2048, 768) # Object -level Embedding
 
         self.g_norm = nn.LayerNorm(768)
-        # self.l_norm = nn.LayerNorm(768)
         self.o_norm = nn.LayerNorm(768)
         
         # being consistent with Fairseq, which starts from 2 for position embedding
@@ -76,19 +75,22 @@ class ViVQABEiT3(nn.Module):
             is_encoder_decoder=False,
         )
 
-    def forward(self, textual_tokens, visual_embeded, text_padding_position):
+    def forward(self, textual_tokens, visual_embeded, text_padding_position, visual_padding_mask=None):     
         multiway_split_position = visual_embeded.size(1)
-        
-        attention_mask = 1 - text_padding_position
-        x2 = self.text_embed(textual_tokens, attention_mask)
-        x2 = self.linear(x2)
-        
+        x2 = self.linear(self.text_embed(textual_tokens, 1 - text_padding_position))
         x = torch.cat([visual_embeded, x2], dim=1)
 
+        if visual_padding_mask is None:
+            visual_padding_mask = torch.zeros(
+                visual_embeded.shape[:2],
+                device=visual_embeded.device,
+                dtype=torch.bool
+            )
+        
         encoder_padding_mask = torch.cat(
             [
-                torch.zeros(visual_embeded.shape[:-1]).to(visual_embeded.device).bool(),
-                text_padding_position,
+                visual_padding_mask.bool(),
+                text_padding_position.bool()
             ],
             dim=1,
         )
@@ -157,23 +159,56 @@ class BEiT3ForVietnameseVisualQuestionAnswering(BEiT3Wrapper):
         )
         self.head.apply(self._init_weights)
 
-    def forward(self, g_feature, o_feature, question, padding_mask, labels=None, return_dict=False, **kwargs):
-        o_feature = self.beit3.visual_proj(o_feature) # (b, k, 768)
+    def forward(self, g_feature, o_feature, question, padding_mask, object_padding_mask=None, labels=None, return_dict=False, **kwargs):
+        o_feature = self.beit3.visual_proj(o_feature)  # (B, K, 768)
 
+        # Optional but recommended
         g_feature = self.beit3.g_norm(g_feature)
         o_feature = self.beit3.o_norm(o_feature)
 
         visual_embeded = torch.cat([g_feature, o_feature], dim=1)
+
+        B = g_feature.size(0)
+        num_global_tokens = g_feature.size(1)
+        num_object_tokens = o_feature.size(1)
         
-        outputs = self.beit3(
-            textual_tokens=question, 
-            visual_embeded=visual_embeded, 
-            text_padding_position=padding_mask, 
+        # Global features are valid in the normal factual pass
+        global_padding_mask = torch.zeros(
+            B,
+            num_global_tokens,
+            dtype=torch.bool,
+            device=g_feature.device
         )
+        
+        if object_padding_mask is None:
+            object_padding_mask = torch.zeros(
+                B,
+                num_object_tokens,
+                dtype=torch.bool,
+                device=o_feature.device
+            )
+        else:
+            object_padding_mask = object_padding_mask.bool()
+        
+        visual_padding_mask = torch.cat(
+            [
+                global_padding_mask,
+                object_padding_mask
+            ],
+            dim=1
+        )
+
+        outputs = self.beit3(
+            textual_tokens=question,
+            visual_embeded=visual_embeded,
+            text_padding_position=padding_mask,
+            visual_padding_mask=visual_padding_mask,
+        )
+
         x = outputs["encoder_out"]
         cls_rep = self.pooler(x)
         logits = self.head(cls_rep)
-        
+
         loss = None
         if labels is not None:
             loss = F.cross_entropy(logits, labels)
